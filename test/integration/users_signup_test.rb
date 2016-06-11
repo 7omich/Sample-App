@@ -10,8 +10,13 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                password_confirmation: "bar" }
     end
     assert_template 'users/new'
+    assert_select 'div#error_explanation', /Name can't be blank/ &&
+                                           /Email is invalid/ &&
+                            /Password confirmation doesn't match Password/ &&
+                           /Password is too short/ && /minimum is 6 characters/
+    assert_select 'div.alert-danger', /The form contains/
   end
-  
+
   test "valid signup information" do
     get signup_path
     assert_difference 'User.count', 1 do
@@ -21,5 +26,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
                                             password_confirmation: "password" }
     end
     assert_template 'users/show'
+    assert_not_nil flash
   end
 end
